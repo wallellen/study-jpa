@@ -15,7 +15,7 @@
 
             <property name="hibernate.connection.username" value="app"/>
             <property name="hibernate.connection.password" value="app"/>
-            <property name="hibernate.connection.url" value="jdbc:derby://localhost:1527/spring;create=true"/>
+            <property name="hibernate.connection.url" value="jdbc:derby://localhost:1527/jpa;create=true"/>
         </properties>
     </persistence-unit>
 </persistence>

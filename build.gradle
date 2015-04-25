@@ -45,7 +45,9 @@ dependencies {
             'org.hibernate:hibernate-c3p0:latest.release',
             'org.hibernate:hibernate-validator:latest.release',
             'org.apache.derby:derbyclient:latest.release',
-            'com.google.inject:guice:latest.release'
+            'com.google.inject:guice:latest.release',
+            'com.google.inject.extensions:guice-persist:latest.release',
+            'org.glassfish:javax.el:latest.release'
     testCompile 'junit:junit:latest.release',
             'org.hamcrest:hamcrest-all:latest.release'
 }
