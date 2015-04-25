@@ -1,0 +1,51 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = '1.8'
+
+version = '1.0'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+idea {
+    project {
+        jdkName = '1.8'
+        languageLevel = '1.8'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+sourceSets {
+    main {
+        output.resourcesDir = output.classesDir
+    }
+}
+
+dependencies {
+    compile 'ch.qos.logback:logback-classic:latest.release',
+            'ch.qos.logback:logback-core:latest.release',
+            'org.slf4j:slf4j-api:latest.release',
+            'org.slf4j:log4j-over-slf4j:latest.release',
+            'org.slf4j:jcl-over-slf4j:latest.release',
+            'org.hibernate:hibernate-core:latest.release',
+            'org.hibernate:hibernate-entitymanager:latest.release',
+            'org.hibernate:hibernate-c3p0:latest.release',
+            'org.hibernate:hibernate-validator:latest.release',
+            'org.apache.derby:derbyclient:latest.release',
+            'com.google.inject:guice:latest.release'
+    testCompile 'junit:junit:latest.release',
+            'org.hamcrest:hamcrest-all:latest.release'
+}

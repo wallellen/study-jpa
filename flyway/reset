@@ -1,0 +1,2 @@
+# ./flyway -configFile=<properties file> -url=<DB Connection URL> -locations=<SQL file location> migrate
+./flyway -configFile=conf/flyway.properties migrate
