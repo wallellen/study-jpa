@@ -1,7 +1,9 @@
 package alvin.configs;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import org.junit.Before;
 
@@ -12,29 +14,30 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class TestSupport {
+    private Injector injector;
 
     @Inject
     protected EntityManager em;
 
-    @Inject
-    private Injector injector;
-
     @Before
     public void setUp() {
-        Guice.createInjector(new JpaPersistModule("default")).injectMembers(this);
+        injector = Guice.createInjector(new JpaPersistModule("default"));
+        injector.getInstance(PersistService.class).start();
+        injector.injectMembers(this);
 
         em.getTransaction().begin();
         try {
-            for (String table : truncateTables()) {
+            for (String table : getTruncateTables()) {
                 em.createNativeQuery("truncate table " + table).executeUpdate();
             }
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
+            throw e;
         }
     }
 
-    protected List<String> truncateTables() {
+    protected List<String> getTruncateTables() {
         return newArrayList("person");
     }
 

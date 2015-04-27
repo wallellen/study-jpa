@@ -35,13 +35,14 @@ public class PersistenceTest {
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
+            throw e;
         }
     }
 
     @Test
     public void test_save_person() {
         Person expectedPerson = new PersonBuilder(null).build();
-        LOGGER.debug("before persist: {}", expectedPerson);
+        LOGGER.info("before persist: {}", expectedPerson);
 
         em.getTransaction().begin();
         try {
@@ -49,14 +50,15 @@ public class PersistenceTest {
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
+            throw e;
         }
         assertThat(expectedPerson.getId(), is(notNullValue()));
-        LOGGER.debug("after persist: {}", expectedPerson);
+        LOGGER.info("after persist: {}", expectedPerson);
 
         em.clear();
 
         Person actualPerson = em.find(Person.class, expectedPerson.getId());
-        LOGGER.debug("after load: {}", actualPerson);
+        LOGGER.info("after load: {}", actualPerson);
 
         assertThat(expectedPerson.toString(), is(actualPerson.toString()));
     }
