@@ -77,4 +77,14 @@ public class Person {
     public int getAge() {
         return (int) birthday.until(LocalDateTime.now(ZoneOffset.UTC), ChronoUnit.YEARS);
     }
+
+    public void makeBirthday(int year, int month, int date) {
+        LocalDateTime localDateTime = LocalDateTime.of(year, month, date, 0, 0, 0);
+        birthday = localDateTime.atOffset(ZoneOffset.UTC).toLocalDateTime();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%d:%s,%d,%s,%s,%s", id, name, getAge(), gender, telephone, email);
+    }
 }

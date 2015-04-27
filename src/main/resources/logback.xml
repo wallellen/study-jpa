@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="edu.alvin" level="DEBUG">
+    <logger name="alvin" level="DEBUG">
         <appender-ref ref="console"/>
     </logger>
 </configuration>

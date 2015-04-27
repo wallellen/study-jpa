@@ -18,12 +18,6 @@ public class PersonService {
 
     @Transactional
     public void save(Person person) {
-//        personRepository.em().getTransaction().begin();
-//        try {
-//            personRepository.em().getTransaction().commit();
-//        } catch (Exception e){
-//            personRepository.em().getTransaction().rollback();
-//        }
         personRepository.save(person);
     }
 }
