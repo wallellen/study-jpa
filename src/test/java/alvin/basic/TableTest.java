@@ -1,8 +1,11 @@
 package alvin.basic;
 
 import alvin.basic.entities.Person;
+import alvin.basic.entities.Student;
 import alvin.basic.services.PersonService;
+import alvin.basic.services.StudentService;
 import alvin.builders.PersonBuilder;
+import alvin.builders.StudentBuilder;
 import alvin.configs.TestSupport;
 import com.google.inject.Inject;
 import org.junit.Test;
@@ -13,11 +16,14 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class ServiceTest extends TestSupport {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceTest.class);
+public class TableTest extends TestSupport {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TableTest.class);
 
     @Inject
     private PersonService personService;
+
+    @Inject
+    private StudentService studentService;
 
     @Test
     public void test_save_person() {
@@ -37,8 +43,26 @@ public class ServiceTest extends TestSupport {
         assertThat(expectedPerson.toString(), is(actualPerson.toString()));
     }
 
+    @Test
+    public void test_second_table() throws Exception {
+        Student expectedStudent = withBuilder(StudentBuilder.class).build();
+        LOGGER.info("before persist: {}", expectedStudent);
+
+        studentService.save(expectedStudent);
+
+        assertThat(expectedStudent.getId(), is(notNullValue()));
+        LOGGER.info("after persist: {}", expectedStudent);
+
+        em.clear();
+
+        Student actualStudent = em.find(Student.class, expectedStudent.getId());
+        LOGGER.info("after load: {}", actualStudent);
+
+        assertThat(actualStudent.toString(), is(actualStudent.toString()));
+    }
+
     @Override
     protected String[] getTruncateTables() {
-        return new String[]{"person"};
+        return new String[]{"person", "student", "student_detail"};
     }
 }

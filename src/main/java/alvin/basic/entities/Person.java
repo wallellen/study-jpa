@@ -1,13 +1,9 @@
 package alvin.basic.entities;
 
 import alvin.core.convert.LocalDateTimeConvert;
+import com.google.common.base.Joiner;
 
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -18,6 +14,8 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @Column()
     private String name;
 
     @Convert(converter = LocalDateTimeConvert.class)
@@ -85,6 +83,7 @@ public class Person {
 
     @Override
     public String toString() {
-        return String.format("%d:%s,%d,%s,%s,%s", id, name, getAge(), gender, telephone, email);
+        return Joiner.on(";").join(id == null ? "" : id.toString(),
+                name, getAge(), gender, telephone, email);
     }
 }

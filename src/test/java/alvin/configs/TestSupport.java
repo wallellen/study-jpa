@@ -1,6 +1,5 @@
 package alvin.configs;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
@@ -37,9 +36,7 @@ public abstract class TestSupport {
         }
     }
 
-    protected List<String> getTruncateTables() {
-        return newArrayList("person");
-    }
+    protected abstract String[] getTruncateTables();
 
     protected <E> E withBuilder(Class<E> entityClass) {
         return injector.getInstance(entityClass);
