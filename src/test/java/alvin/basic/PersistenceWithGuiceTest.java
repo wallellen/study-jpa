@@ -1,8 +1,6 @@
 package alvin.basic;
 
 import alvin.basic.entities.Person;
-import alvin.basic.services.PersonService;
-import alvin.builders.PersonBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
@@ -21,6 +19,8 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -31,9 +31,7 @@ public class PersistenceWithGuiceTest {
     private static final String[] TABLE_LIST = {"person"};
 
     @Inject
-    private PersonService personService;
-
-    @Inject EntityManager em;
+    private EntityManager em;
 
     @Before
     public void setUp() {
@@ -52,10 +50,17 @@ public class PersistenceWithGuiceTest {
 
     @Test
     public void test_save_person() {
-        Person expectedPerson = new PersonBuilder(null).build();
+        Person expectedPerson = createPerson();
         LOGGER.info("before persist: {}", expectedPerson);
 
-        personService.save(expectedPerson);
+        em.getTransaction().begin();
+        try {
+            em.persist(expectedPerson);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        }
 
         assertThat(expectedPerson.getId(), is(notNullValue()));
         LOGGER.info("after persist: {}", expectedPerson);
@@ -66,6 +71,16 @@ public class PersistenceWithGuiceTest {
         LOGGER.info("after load: {}", actualPerson);
 
         assertThat(expectedPerson.toString(), is(actualPerson.toString()));
+    }
+
+    private Person createPerson() {
+        Person person = new Person();
+        person.setName("Alvin");
+        person.setGender("M");
+        person.setEmail("alvin@fakeaddr.com");
+        person.setTelephone("13999999999");
+        person.setBirthday(LocalDateTime.of(1981, 3, 17, 0, 0).atOffset(ZoneOffset.UTC).toLocalDateTime());
+        return person;
     }
 }
 

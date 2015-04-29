@@ -2,14 +2,14 @@ package alvin.txns;
 
 import alvin.basic.entities.Person;
 import alvin.basic.entities.Worker;
-import alvin.builders.PersonBuilder;
-import alvin.builders.WorkerBuilder;
 import alvin.configs.TestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.LockModeType;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.Matchers.is;
@@ -24,14 +24,14 @@ public class TransactionTest extends TestSupport {
 
     @Test
     public void test_save_and_update() throws Exception {
-        Person expectedPerson = withBuilder(PersonBuilder.class).build();
+        Person expectedPerson = createPerson();
 
         em.getTransaction().begin();
         try {
             em.persist(expectedPerson);
             assertThat(expectedPerson.getId(), is(notNullValue()));
 
-            expectedPerson.setName("Auth");
+            expectedPerson.setName("Arthur");
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
@@ -45,7 +45,7 @@ public class TransactionTest extends TestSupport {
 
     @Test
     public void test_find_and_update() throws Exception {
-        Person expectedPerson = withBuilder(PersonBuilder.class).create();
+        Person expectedPerson = persistPerson();
 
         em.getTransaction().begin();
         try {
@@ -62,10 +62,33 @@ public class TransactionTest extends TestSupport {
         assertThat(actualPerson.getName(), is("Arthur"));
     }
 
+    private Person createPerson() {
+        Person person = new Person();
+        person.setName("Alvin");
+        person.setGender("M");
+        person.setEmail("alvin@fakeaddr.com");
+        person.setTelephone("13999999999");
+        person.setBirthday(LocalDateTime.of(1981, 3, 17, 0, 0).atOffset(ZoneOffset.UTC).toLocalDateTime());
+        return person;
+    }
+
+    private Person persistPerson() {
+        Person person = createPerson();
+        em.getTransaction().begin();
+        try {
+            em.persist(person);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        }
+        return person;
+    }
+
     @Test
     public void test_query_and_lock() throws Exception {
         LOGGER.info("create worker");
-        Worker expectedWorker = withBuilder(WorkerBuilder.class).create();
+        Worker expectedWorker = persistWorker();
 
         LOGGER.info("first update");
         updateWorker(expectedWorker.getId(), expectedWorker.getVersion());
@@ -89,6 +112,22 @@ public class TransactionTest extends TestSupport {
 
         actualWorker = em.find(Worker.class, workerId);
         assertThat(actualWorker.getVersion(), not(expectedVersion));
+    }
+
+    private Worker persistWorker() {
+        Worker worker = new Worker();
+        worker.setName("Alvin");
+        worker.setGender("M");
+
+        em.getTransaction().begin();
+        try {
+            em.persist(worker);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        }
+        return worker;
     }
 
     @Override

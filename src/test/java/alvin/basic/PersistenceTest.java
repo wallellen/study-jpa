@@ -1,7 +1,6 @@
 package alvin.basic;
 
 import alvin.basic.entities.Person;
-import alvin.builders.PersonBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -10,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -41,7 +42,7 @@ public class PersistenceTest {
 
     @Test
     public void test_save_person() {
-        Person expectedPerson = new PersonBuilder(null).build();
+        Person expectedPerson = createPerson();
         LOGGER.info("before persist: {}", expectedPerson);
 
         em.getTransaction().begin();
@@ -61,5 +62,15 @@ public class PersistenceTest {
         LOGGER.info("after load: {}", actualPerson);
 
         assertThat(expectedPerson.toString(), is(actualPerson.toString()));
+    }
+
+    private Person createPerson() {
+        Person person = new Person();
+        person.setName("Alvin");
+        person.setGender("M");
+        person.setEmail("alvin@fakeaddr.com");
+        person.setTelephone("13999999999");
+        person.setBirthday(LocalDateTime.of(1981, 3, 17, 0, 0).atOffset(ZoneOffset.UTC).toLocalDateTime());
+        return person;
     }
 }

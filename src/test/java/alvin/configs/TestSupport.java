@@ -34,8 +34,4 @@ public abstract class TestSupport {
     }
 
     protected abstract String[] getTruncateTables();
-
-    protected <E> E withBuilder(Class<E> entityClass) {
-        return injector.getInstance(entityClass);
-    }
 }

@@ -1,6 +1,6 @@
 package alvin.basic.repositories;
 
-import alvin.basic.entities.Worker;
+import alvin.basic.entities.User;
 import alvin.core.repositories.RepositorySupport;
 
 import javax.inject.Inject;
@@ -9,10 +9,10 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 
 @Singleton
-public class WorkerRepository extends RepositorySupport<Worker> {
+public class UserRepository extends RepositorySupport<User> {
 
     @Inject
-    public WorkerRepository(Provider<EntityManager> emProvider) {
+    public UserRepository(Provider<EntityManager> emProvider) {
         super(emProvider);
     }
 }

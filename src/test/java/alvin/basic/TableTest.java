@@ -2,15 +2,13 @@ package alvin.basic;
 
 import alvin.basic.entities.Person;
 import alvin.basic.entities.Student;
-import alvin.basic.services.PersonService;
-import alvin.basic.services.StudentService;
-import alvin.builders.PersonBuilder;
-import alvin.builders.StudentBuilder;
 import alvin.configs.TestSupport;
-import com.google.inject.Inject;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -19,18 +17,19 @@ import static org.junit.Assert.assertThat;
 public class TableTest extends TestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(TableTest.class);
 
-    @Inject
-    private PersonService personService;
-
-    @Inject
-    private StudentService studentService;
-
     @Test
     public void test_save_person() {
-        Person expectedPerson = withBuilder(PersonBuilder.class).build();
+        Person expectedPerson = createPerson();
         LOGGER.info("before persist: {}", expectedPerson);
 
-        personService.save(expectedPerson);
+        em.getTransaction().begin();
+        try {
+            em.persist(expectedPerson);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        }
 
         assertThat(expectedPerson.getId(), is(notNullValue()));
         LOGGER.info("after persist: {}", expectedPerson);
@@ -43,12 +42,29 @@ public class TableTest extends TestSupport {
         assertThat(expectedPerson.toString(), is(actualPerson.toString()));
     }
 
+    private Person createPerson() {
+        Person person = new Person();
+        person.setName("Alvin");
+        person.setGender("M");
+        person.setEmail("alvin@fakeaddr.com");
+        person.setTelephone("13999999999");
+        person.setBirthday(LocalDateTime.of(1981, 3, 17, 0, 0).atOffset(ZoneOffset.UTC).toLocalDateTime());
+        return person;
+    }
+
     @Test
     public void test_second_table() throws Exception {
-        Student expectedStudent = withBuilder(StudentBuilder.class).build();
+        Student expectedStudent = createStudent();
         LOGGER.info("before persist: {}", expectedStudent);
 
-        studentService.save(expectedStudent);
+        em.getTransaction().begin();
+        try {
+            em.persist(expectedStudent);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        }
 
         assertThat(expectedStudent.getId(), is(notNullValue()));
         LOGGER.info("after persist: {}", expectedStudent);
@@ -59,6 +75,19 @@ public class TableTest extends TestSupport {
         LOGGER.info("after load: {}", actualStudent);
 
         assertThat(actualStudent.toString(), is(actualStudent.toString()));
+    }
+
+    private Student createStudent() {
+        Student student = new Student();
+        student.setSno("001");
+        student.setName("Alvin");
+        student.setGender("M");
+        student.setTelephone("13991999999");
+        student.setBirthday(LocalDateTime.of(1981, 3, 17, 0, 0).atOffset(ZoneOffset.UTC).toLocalDateTime());
+        student.setAddress("Xi'an Shannxi China");
+        student.setEmail("alvin@fake.com");
+        student.setQq("19888");
+        return student;
     }
 
     @Override

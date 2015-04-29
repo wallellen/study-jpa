@@ -1,6 +1,6 @@
 package alvin.basic.repositories;
 
-import alvin.basic.entities.Student;
+import alvin.basic.entities.Interest;
 import alvin.core.repositories.RepositorySupport;
 
 import javax.inject.Inject;
@@ -9,10 +9,10 @@ import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 
 @Singleton
-public class StudentRepository extends RepositorySupport<Student> {
+public class InterestRepository extends RepositorySupport<Interest> {
 
     @Inject
-    public StudentRepository(Provider<EntityManager> emProvider) {
+    public InterestRepository(Provider<EntityManager> emProvider) {
         super(emProvider);
     }
 }

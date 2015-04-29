@@ -2,12 +2,14 @@ package alvin.basic;
 
 import alvin.basic.entities.Person;
 import alvin.basic.services.PersonService;
-import alvin.builders.PersonBuilder;
 import alvin.configs.TestSupport;
 import com.google.inject.Inject;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -21,7 +23,7 @@ public class ServiceTest extends TestSupport {
 
     @Test
     public void test_save_person() {
-        Person expectedPerson = withBuilder(PersonBuilder.class).build();
+        Person expectedPerson = createPerson();
         LOGGER.info("before persist: {}", expectedPerson);
 
         personService.save(expectedPerson);
@@ -37,8 +39,18 @@ public class ServiceTest extends TestSupport {
         assertThat(expectedPerson.toString(), is(actualPerson.toString()));
     }
 
+    private Person createPerson() {
+        Person person = new Person();
+        person.setName("Alvin");
+        person.setGender("M");
+        person.setEmail("alvin@fakeaddr.com");
+        person.setTelephone("13999999999");
+        person.setBirthday(LocalDateTime.of(1981, 3, 17, 0, 0).atOffset(ZoneOffset.UTC).toLocalDateTime());
+        return person;
+    }
+
     @Override
     protected String[] getTruncateTables() {
-        return new String[]{"person"};
+        return new String[]{"worker"};
     }
 }
