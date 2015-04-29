@@ -8,9 +8,6 @@ import org.junit.Before;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class TestSupport {
     private Injector injector;

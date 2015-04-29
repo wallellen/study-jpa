@@ -5,15 +5,11 @@ import alvin.basic.entities.Worker;
 import alvin.builders.PersonBuilder;
 import alvin.builders.WorkerBuilder;
 import alvin.configs.TestSupport;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.Matchers.is;

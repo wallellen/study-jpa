@@ -1,6 +1,5 @@
 package alvin.basic.repositories;
 
-import alvin.basic.entities.Student;
 import alvin.basic.entities.Worker;
 import alvin.core.repositories.RepositorySupport;
 
