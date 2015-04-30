@@ -1,8 +1,10 @@
 package alvin.relationship;
 
+import alvin.basic.entities.Group;
 import alvin.basic.entities.Interest;
 import alvin.basic.entities.User;
 import alvin.basic.entities.UserInfo;
+import alvin.basic.services.GroupService;
 import alvin.basic.services.InterestService;
 import alvin.basic.services.UserService;
 import alvin.configs.TestSupport;
@@ -25,6 +27,9 @@ public class RelationshipTest extends TestSupport {
 
     @Inject
     private InterestService interestService;
+
+    @Inject
+    private GroupService groupService;
 
     @Test
     public void test_create_user() throws Exception {
@@ -73,31 +78,31 @@ public class RelationshipTest extends TestSupport {
         List<User> users = createUsers(4);
 
         User user = users.get(0);
-        user.addFriend(users.get(1));
-        user.addFriend(users.get(2));
-        user.addFriend(users.get(3));
+        user.addEmployee(users.get(1));
+        user.addEmployee(users.get(2));
+        user.addEmployee(users.get(3));
         userService.save(user);
 
         user = users.get(1);
-        user.addFriend(users.get(2));
-        user.addFriend(users.get(3));
+        user.addEmployee(users.get(2));
+        user.addEmployee(users.get(3));
         userService.save(user);
         em.clear();
 
         user = userService.findById(users.get(0).getId()).get();
-        assertThat(user.getFriends().size(), is(1));
-        assertThat(user.getFriends().get(0).getName(), is("姓名1"));
+        assertThat(user.getEmployees().size(), is(1));
+        assertThat(user.getEmployees().get(0).getName(), is("姓名1"));
 
         user = userService.findById(users.get(1).getId()).get();
-        assertThat(user.getFriends().size(), is(2));
-        assertThat(user.getFriends().get(0).getName(), is("姓名2"));
-        assertThat(user.getFriends().get(1).getName(), is("姓名3"));
+        assertThat(user.getEmployees().size(), is(2));
+        assertThat(user.getEmployees().get(0).getName(), is("姓名2"));
+        assertThat(user.getEmployees().get(1).getName(), is("姓名3"));
     }
 
     @Test
     public void test_user_with_interest() throws Exception {
         List<User> users = createUsers(2);
-        List<Interest> interests = createIntereasts(5);
+        List<Interest> interests = createInterests(5);
         em.clear();
 
         User user = users.get(0);
@@ -131,6 +136,70 @@ public class RelationshipTest extends TestSupport {
         assertThat(interest.getUsers().size(), is(1));
     }
 
+    @Test
+    public void test_group_user() throws Exception {
+        List<User> users = createUsers(5);
+        Group group = createGroup();
+        group.addUser(users.get(0));
+        group.addUser(users.get(2));
+        group.addUser(users.get(4));
+        groupService.save(group);
+
+        em.clear();
+
+        users = userService.findAll();
+        assertThat(users.size(), is(3));
+        assertThat(users.get(0).getName(), is("姓名0"));
+        assertThat(users.get(1).getName(), is("姓名2"));
+        assertThat(users.get(2).getName(), is("姓名4"));
+    }
+
+    @Test
+    public void test_cascade_delete() throws Exception {
+        List<User> users = createUsers(5);
+        Group group = createGroup();
+        group.addUser(users.get(0));
+        group.addUser(users.get(2));
+        group.addUser(users.get(4));
+        groupService.save(group);
+
+        em.clear();
+
+        em.getTransaction().begin();
+        try {
+            group = groupService.findById(group.getId()).get();
+            assertThat(group.getUsers().size(), is(3));
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw e;
+        }
+    }
+
+    @Test
+    public void test_one_plus_n() throws Exception {
+        List<User> users = createUsers(5);
+        List<Group> groups = createGroups(2);
+
+        Group group = groups.get(0);
+        group.addUser(users.get(0));
+        group.addUser(users.get(1));
+        group.addUser(users.get(2));
+        groupService.save(group);
+
+        group = groups.get(1);
+        group.addUser(users.get(3));
+        group.addUser(users.get(4));
+        groupService.save(group);
+
+        em.clear();
+
+        groups = groupService.findAll();
+//        assertThat(groups.get(0).getUsers().size(), is(3));
+//        assertThat(groups.get(1).getUsers().size(), is(2));
+    }
+
     private User createUser() {
         User user = new User();
         user.setName("Alvin");
@@ -151,7 +220,7 @@ public class RelationshipTest extends TestSupport {
         return info;
     }
 
-    private List<Interest> createIntereasts(int n) {
+    private List<Interest> createInterests(int n) {
         List<Interest> interests = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             Interest interest = new Interest();
@@ -173,9 +242,25 @@ public class RelationshipTest extends TestSupport {
         return users;
     }
 
+    private Group createGroup() {
+        Group group = new Group();
+        group.setName("分组");
+        return group;
+    }
+
+    private List<Group> createGroups(int n) {
+        List<Group> groups = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            Group group = new Group();
+            group.setName("分组" + i);
+            groups.add(group);
+        }
+        return groups;
+    }
+
     @Override
     protected String[] getTruncateTables() {
-        return new String[]{"user_", "user_info_", "group_", "group_user_",
+        return new String[]{"user_", "user_info_", "group_",
                 "interest_", "user_interest_"};
     }
 }

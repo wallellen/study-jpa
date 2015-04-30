@@ -25,8 +25,6 @@ public class UserInfo {
     @Column(name = "full_name")
     private String fullName;
     private String gender;
-
-    @Convert(converter = LocalDateTimeConvert.class)
     private LocalDateTime birthday;
     private String email;
     private String telephone;

@@ -1,10 +1,7 @@
 package alvin.basic.entities;
 
-import alvin.core.convert.LocalDateTimeConvert;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,7 +26,6 @@ public class User {
     private String name;
     private String password;
 
-    @Convert(converter = LocalDateTimeConvert.class)
     @Column(name = "last_login_time")
     private LocalDateTime lastLoginTime;
 
@@ -37,15 +33,18 @@ public class User {
     private UserInfo userInfo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "friend_id")
-    private User friend;
+    @JoinColumn(name = "manager_id")
+    private User manager;
 
-    @OneToMany(mappedBy = "friend", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<User> friends = new ArrayList<>();
+    @OneToMany(mappedBy = "manager", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<User> employees = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users", cascade = {CascadeType.ALL})
     private List<Interest> interests = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     public int getId() {
         return id;
@@ -87,20 +86,20 @@ public class User {
         this.userInfo = userInfo;
     }
 
-    public User getFriend() {
-        return friend;
+    public User getManager() {
+        return manager;
     }
 
-    public void setFriend(User friend) {
-        this.friend = friend;
+    public void setManager(User manager) {
+        this.manager = manager;
     }
 
-    public List<User> getFriends() {
-        return friends;
+    public List<User> getEmployees() {
+        return employees;
     }
 
-    public void setFriends(List<User> friends) {
-        this.friends = friends;
+    public void setEmployees(List<User> employees) {
+        this.employees = employees;
     }
 
     public List<Interest> getInterests() {
@@ -111,13 +110,21 @@ public class User {
         this.interests = interests;
     }
 
-    public void addFriend(User friend) {
-        friend.friend = this;
-        friends.add(friend);
+    public void addEmployee(User employee) {
+        employee.manager = this;
+        employees.add(employee);
     }
 
     public void addInterest(Interest interest) {
         interest.getUsers().add(this);
         interests.add(interest);
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }

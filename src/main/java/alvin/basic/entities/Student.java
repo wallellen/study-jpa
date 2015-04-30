@@ -27,7 +27,6 @@ public class Student {
     private String telephone;
 
     @Column(table = "student_detail")
-    @Convert(converter = LocalDateTimeConvert.class)
     private LocalDateTime birthday;
 
     @Column(table = "student_detail")

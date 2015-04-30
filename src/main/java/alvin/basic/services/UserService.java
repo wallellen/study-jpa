@@ -42,4 +42,8 @@ public class UserService {
     public void saveAll(List<User> users) {
         users.forEach(userRepository::save);
     }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 }

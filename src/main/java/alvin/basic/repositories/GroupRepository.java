@@ -1,5 +1,6 @@
 package alvin.basic.repositories;
 
+import alvin.basic.entities.Group;
 import alvin.basic.entities.User;
 import alvin.core.repositories.RepositorySupport;
 
@@ -10,14 +11,14 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Singleton
-public class UserRepository extends RepositorySupport<User> {
+public class GroupRepository extends RepositorySupport<Group> {
 
     @Inject
-    public UserRepository(Provider<EntityManager> emProvider) {
+    public GroupRepository(Provider<EntityManager> emProvider) {
         super(emProvider);
     }
 
-    public List<User> findAll() {
-        return list("from User order by name");
+    public List<Group> findAll() {
+        return list("from Group");
     }
 }

@@ -46,6 +46,7 @@ public class TransactionTest extends TestSupport {
     @Test
     public void test_find_and_update() throws Exception {
         Person expectedPerson = persistPerson();
+        em.clear();
 
         em.getTransaction().begin();
         try {
